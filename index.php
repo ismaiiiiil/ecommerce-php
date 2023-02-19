@@ -1,0 +1,45 @@
+<?php
+require_once './autoload.php';
+require_once './views/includes/header.php';
+
+// require_once './controllers/HomeController.php';
+// require_once './controllers/AdminController.php';
+
+$home = new HomeController();
+
+$pages = [
+            'home', 'cart', 'dashboard', 'updateProduct', 'deleteProduct',
+            'addProduct','emptycart','show','cancelcart','register','login',
+            'checkout','logout','products','orders','addOrder'
+        ];
+
+if(isset($_GET['page'])){
+        if(in_array($_GET['page'], $pages)){
+            $page =$_GET['page'];
+            // page dyal admin ila kan connecter
+            if($page === "dashboard" || $page === "deleteProduct"   || $page ==="updateProduct"
+                || $page === "addProduct" || $page === "addOrder" || $page === "products" || $page === "orders") 
+            {
+                    if(isset($_SESSION['admin']) && $_SESSION['admin'] == true) // admin connecter 
+                    {
+                        $admin = new AdminController();
+                        $admin->index($page);
+                    }else 
+                    { 
+                        include('views/includes/404.php'); // page introuvable
+                    }
+            } else
+            {
+                $home->index($page);
+            }
+        }
+        else{
+            include('views/includes/404.php'); // page introuvable
+        }
+}else{
+    $home->index('home');
+}
+
+require_once './views/includes/footer.php';
+
+?>
